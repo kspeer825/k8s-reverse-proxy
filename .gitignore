@@ -1,0 +1,3 @@
+# TLS artifacts
+*.crt
+*.key
