@@ -1,25 +1,54 @@
-# Kubernetes Reverse Proxy
+# Kubernetes Reverse Proxy Demo
 
-[Kong](https://konghq.com/) offers an open source reverse-proxy service built on top of nginx that can run on [Kubernetes](https://docs.konghq.com/gateway/3.8.x/install/kubernetes/proxy/).
+[Kong](https://konghq.com/) offers an open source reverse proxy service built on top of nginx that can run on [Kubernetes](https://docs.konghq.com/gateway/3.8.x/install/kubernetes/proxy/).
 
-This repo demos how to run the Kong Gateway on K8s.
+This repo demos how to spin up an instnace of the reverse proxy locally.
 
 ## Dependencies
 
+* [colima](https://github.com/abiosoft/colima) local k8s orchestration
 * [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/) k8s cli
 * [helm](https://helm.sh/docs/intro/quickstart/) k8s package manager
-* [colima](https://github.com/abiosoft/colima) local k8s orchestration
+* (optional) [k9s](https://k9scli.io/) k8s termina-based UI
 
-## Local Bootstrap
+## Demo
 
-Start a [k3s](https://k3s.io/) node using colima:
+Start up the reverse proxy services:
+```
+make bootstrap
+```
+
+![k9s_pods](./images/k9s-pods.png)
+
+Enable port forwarding in a separate shell:
+```
+make port-forward
+```
+
+Configure an endpoint:
+```
+make create-mock-service
+```
+
+Validate:
+```
+make test
+```
+
+Teardown:
+```
+make nuke
+```
+
+Note: This local implementation relies on runnning a [k3s](https://k3s.io/) node using colima. This can be ran separately independently from the reverse proxy services for other use cases.
+
+Start k3s node:
 ```
 colima start --kubernetes
 ```
-
-Start up the Kong Gateway services:
+Terminate k3s node:
 ```
-make bootstrap
+colima stop
 ```
 
 ## Use Cases
@@ -49,7 +78,21 @@ curl "localhost:8001/services/serviceB/routes" -d paths="/gh" -d preserve_host=t
 You can now proxy requests from your local k8s cluster to my personal web site, and my Github profile via [localhost/](https://localhost/) and [localhost/gh](https://localhost/gh). This is useful for scenarios where you have upstream web apps or APIs that are non-public facing, yet you need to expose them safely to the internet. You can configure paths to your private web services in Kong, expose the K8s ingress entrypoint, and apply one of the supported authentication methods at the proxy level (see [Kong Auth plugins](https://docs.konghq.com/hub/?tier=free&category=authentication)).
 
 ### Response Caching
-ToDo - example writeup
+
+Responses for frequently made requests can be cached at your ingress point in order to reduce response times, and lighten the load on upstream services. The open source [Proxy Cache](https://docs.konghq.com/hub/kong-inc/proxy-cache/) plugin can be configured based on request method, content type, and status code. It can be applied to a specific endpoint or requester.
+
+Configure:
+```
+curl "localhost:8001/plugins" -d "name=proxy-cache" -d "config.request_method=GET" -d "config.response_code=200" -d "config.content_type=application/json" -d "config.cache_ttl=30" -d "config.strategy=memory"
+```
+
+Validate:
+```
+curl -s -i -X GET http://localhost:80/mock/anything | grep X-Cache
+```
+
+![cache_hit](./images/cache-hit.png)
+
 
 ### Rate Limiting
-ToDo - example writeup
+ToDo - example writeup w/ hey to demo rate limting
