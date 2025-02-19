@@ -6,17 +6,19 @@ This repo demos how to spin up an instance of the reverse proxy locally.
 
 - [Demo](#demo)
   - [Setup](#setup)
-  - [Teardwon](#teardown)
+  - [Teardown](#teardown)
 - [Use Cases](#use-cases)
   - [Reverse Proxy](#reverse-proxy)
   - [Response Caching](#response-caching)
   - [Rate Limiting](#rate-limiting)
 
+![k9s_pods](./images/k9s-pods.png)
+
 ## Demo
 
 ### Dependencies
 * [colima](https://github.com/abiosoft/colima) local K8s orchestration
-* [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/) K8s cli
+* [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/) K8s CLI
 * [helm](https://helm.sh/docs/intro/quickstart/) K8s package manager
 * [k9s](https://k9scli.io/) (optional) K8s terminal-based UI
 
@@ -47,7 +49,7 @@ NAMESPACE: kong
 STATUS: deployed
 REVISION: 1
 
-▶️  Waitig for CP to spin up...
+▶️  Waiting for CP to spin up...
 
 ▶️  Helm install kong-dp:
 NAME: kong-dp
@@ -77,9 +79,6 @@ $ make test
 ```
 There should be three healthy services running; the control plane, the data plane, and the database.
 
-![k9s_pods](./images/k9s-pods.png)
-
-
 ### Teardown
 ```
 $ make nuke
@@ -95,7 +94,7 @@ INFO[0010] stopping ...                                  context=vm
 INFO[0014] done
 ```
 
-Note: This local implementation relies on runnning a [k3s](https://k3s.io/) node using colima. This can be ran independently from the reverse proxy services for other use cases.
+Note: This local implementation relies on running a [k3s](https://k3s.io/) node using colima. This can be ran independently from the reverse proxy services for other use cases.
 ```
 colima start --kubernetes
 ```
@@ -104,7 +103,7 @@ colima start --kubernetes
 
 ### Reverse Proxy
 
-A reverse proxy enables a single ingress point to upstream web services. The Kong Gateway accomplishes this through path based routing. This is useful for scenarios where you have upstream web apps or APIs that are non-public facing, but still require secure ingress from the internet. You can configure paths to your private web services in Kong, expose the K8s ingress entrypoint, and apply one of the supported authentication methods at the proxy level (see [Kong Auth plugins](https://docs.konghq.com/hub/?tier=free&category=authentication)).
+A reverse proxy enables a single ingress point to upstream web services. The Kong Gateway accomplishes this through path based routing. This is useful for scenarios where you have upstream web apps or APIs that are non-public facing, but still require secure ingress from the internet. You can configure paths to your private web services in Kong, expose the K8s ingress entry-point, and apply one of the supported authentication methods at the proxy level (see [Kong Auth plugins](https://docs.konghq.com/hub/?tier=free&category=authentication)).
 
 #### Configure
 Endpoint A:

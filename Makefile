@@ -11,7 +11,7 @@ SHELL = /bin/zsh
 up:
 	echo "▶️  Helm install kong-cp:"
 	helm install kong-cp kong/kong -n kong --values ./values-cp.yaml
-	echo "⏸️. Waitig for CP to spin up..." && sleep 120
+	echo "⏸️. Waiting for CP to spin up..." && sleep 120
 	echo "▶️  Helm install kong-dp:"
 	helm install kong-dp kong/kong -n kong -f ./values-dp.yaml
 
