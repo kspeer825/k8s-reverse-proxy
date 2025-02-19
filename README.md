@@ -121,7 +121,7 @@ curl "localhost:8001/services/serviceB/routes" -d paths="/gh" -d preserve_host=t
 
 #### Validate
 
-You can now proxy requests from your local K8s cluster to two different websites using different paths: [localhost/](https://localhost/) and [localhost/gh](https://localhost/gh).
+You can now proxy requests from the local K8s cluster to different domains using the `/` and `/gh` paths: [localhost/](https://localhost/) and [localhost/gh](https://localhost/gh).
 
 ![portfolio](./images/portfolio.png)
 
@@ -158,3 +158,5 @@ curl localhost:8001/plugins -d "name=rate-limiting" -d "config.minute=5" -d "con
 ```
 for _ in {1..6}; do curl -i -s localhost:80/mock/anything; sleep 1; done
 ```
+
+![rate_limit](./images/rate-limit.png)
