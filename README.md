@@ -4,15 +4,15 @@
 
 This repo demos how to spin up an instnace of the reverse proxy locally.
 
-## Dependencies
+## Demo
 
+### Dependencies
 * [colima](https://github.com/abiosoft/colima) local k8s orchestration
 * [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/) k8s cli
 * [helm](https://helm.sh/docs/intro/quickstart/) k8s package manager
 * (optional) [k9s](https://k9scli.io/) k8s termina-based UI
 
-## Demo
-
+### Bootstrap
 Start up the reverse proxy services:
 ```
 make bootstrap
@@ -51,31 +51,28 @@ Terminate k3s node:
 colima stop
 ```
 
-## Use Cases
+### Use Cases
 
-### Proxy Gateway
+#### Proxy Gateway
 
 A reverse proxy enables a single ingress point to upstream web services. The Kong Gateway accomplishes this through path based routing. This is useful for scenarios where you have upstream web apps or APIs that are non-public facing, but still require secure ingress from the internet. You can configure paths to your private web services in Kong, expose the K8s ingress entrypoint, and apply one of the supported authentication methods at the proxy level (see [Kong Auth plugins](https://docs.konghq.com/hub/?tier=free&category=authentication)).
 
-Configure Service A:
+##### Configure
+Endpoint A:
 ```
 curl "localhost:8001/services" -d name=serviceA -d url="https://speerportfolio.com"
-```
-And a corresponding Route:
-```
+
 curl "localhost:8001/services/serviceA/routes" -d paths="/"
 ```
 
-Confiugre Service B:
+Endpoint B:
 ```
 curl "localhost:8001/services" -d name=serviceB -d url="https://github.com/kspeer825"
-```
-And it's corresponding Route:
-```
+
 curl "localhost:8001/services/serviceB/routes" -d paths="/gh" -d preserve_host=true
 ```
 
-Validate:
+##### Validate
 
 You can now proxy requests from your local k8s cluster to two different websites using different paths: [localhost/](https://localhost/) and [localhost/gh](https://localhost/gh).
 
@@ -83,16 +80,16 @@ You can now proxy requests from your local k8s cluster to two different websites
 
 ![github](./images/github.png)
 
-### Response Caching
+#### Response Caching
 
 Responses for frequently made requests can be cached at your ingress point in order to reduce response times, and lighten the load on upstream services. The open source [Proxy Cache](https://docs.konghq.com/hub/kong-inc/proxy-cache/) plugin can be configured based on request method, content type, and status code. It can be applied to a specific endpoint or requester.
 
-Configure:
+##### Configure:
 ```
 curl "localhost:8001/plugins" -d "name=proxy-cache" -d "config.request_method=GET" -d "config.response_code=200" -d "config.content_type=application/json" -d "config.cache_ttl=30" -d "config.strategy=memory"
 ```
 
-Validate:
+##### Validate:
 ```
 curl -s -i -X GET http://localhost:80/mock/anything | grep X-Cache
 ```
@@ -100,17 +97,17 @@ curl -s -i -X GET http://localhost:80/mock/anything | grep X-Cache
 ![cache_hit](./images/cache-hit.png)
 
 
-### Rate Limiting
+#### Rate Limiting
 
 Rate limiting can be enabled in order to protect against DOS attaks, or to limit usage on upstream services. The open source [Rate Limiting](https://docs.konghq.com/hub/kong-inc/rate-limiting/) plugin can be configured based on requests per unit time (second, minute, hour, etc.). It can be applied to a specific endpoit or requester, and can aggregate requests by various fields.
 
-Confiugre:
+##### Confiugre:
 ```
 curl localhost:8001/plugins -d "name=rate-limiting" -d "config.minute=5" -d "config.policy=local"
 
 ```
 
-Validate:
+##### Validate:
 ```
 for _ in {1..6}; do curl -i -s localhost:80/mock/anything; sleep 1; done
 ```
