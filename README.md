@@ -1,4 +1,8 @@
 # Kubernetes Reverse Proxy
+[Kong](https://konghq.com/) offers an open source reverse proxy service built on top of nginx that can run on [Kubernetes](https://docs.konghq.com/gateway/3.8.x/install/kubernetes/proxy/).
+
+This repo demos how to spin up an instance of the reverse proxy locally.
+
 - [Demo](#demo)
   - [Setup](#setup)
   - [Teardown](#teardown)
@@ -7,11 +11,9 @@
   - [Response Caching](#response-caching)
   - [Rate Limiting](#rate-limiting)
 
-[Kong](https://konghq.com/) offers an open source reverse proxy service built on top of nginx that can run on [Kubernetes](https://docs.konghq.com/gateway/3.8.x/install/kubernetes/proxy/).
-
-This repo demos how to spin up an instance of the reverse proxy locally.
 
 ![k9s_pods](./images/k9s-pods.png)
+
 
 ## Demo
 
