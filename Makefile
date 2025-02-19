@@ -82,10 +82,17 @@ enable-metrics-plugin:
 
 enable-caching-plugin:
 	@echo "Enabling proxy caching..."
-	@curl "localhost:8001/plugins" \
+	@curl -s -X POST http://localhost:8001/plugins \
 	  -d "name=proxy-cache" \
 	  -d "config.request_method=GET" \
 	  -d "config.response_code=200" \
 	  -d "config.content_type=application/json" \
 	  -d "config.cache_ttl=30" \
 	  -d "config.strategy=memory" | jq .
+
+enable-rate-limiting-plugin:
+	@echo "Enabling rate limiting..."
+	@curl -s -X POST http://localhost:8001/plugins \
+	  -d "name=rate-limiting" \
+	  -d "config.minute=5" \
+	  -d "config.policy=local" | jq .
