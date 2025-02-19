@@ -2,42 +2,80 @@
 
 [Kong](https://konghq.com/) offers an open source reverse proxy service built on top of nginx that can run on [Kubernetes](https://docs.konghq.com/gateway/3.8.x/install/kubernetes/proxy/).
 
-This repo demos how to spin up an instnace of the reverse proxy locally.
+This repo demos how to spin up an instance of the reverse proxy locally.
 
 ## Demo
 
 ### Dependencies
-* [colima](https://github.com/abiosoft/colima) local k8s orchestration
-* [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/) k8s cli
-* [helm](https://helm.sh/docs/intro/quickstart/) k8s package manager
-* (optional) [k9s](https://k9scli.io/) k8s termina-based UI
+* [colima](https://github.com/abiosoft/colima) local K8s orchestration
+* [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/) K8s cli
+* [helm](https://helm.sh/docs/intro/quickstart/) K8s package manager
+* [k9s](https://k9scli.io/) (optional) K8s terminal-based UI
 
-### Bootstrap
+### Setup
 Start up the reverse proxy services:
 ```
-make bootstrap
+$ make bootstrap
+
+▶️  Bootstrapping Kong 🦍...
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "kong" chart repository
+...Successfully got an update from the "bitnami" chart repository
+Update Complete. ⎈Happy Helming!⎈
+▶️  Setting up kong namespace ...
+namespace/kong created
+secret/kong-enterprise-license created
+▶️  Setting cluster certs...
+secret/kong-cluster-cert created▶️  Pulling helm charts...
+
+▶️  Helm install kong-cp:
+NAME: kong-cp
+LAST DEPLOYED: Thu Feb 13 15:43:12 2025
+NAMESPACE: kong
+STATUS: deployed
+REVISION: 1
+⏸️. Waitig for CP to spin up...
+▶️  Helm install kong-dp:
+NAME: kong-dp
+LAST DEPLOYED: Thu Feb 13 15:45:17 2025
+NAMESPACE: kong
+STATUS: deployed
+REVISION: 1
+⏹️  Bootstrap complete.
+```
+
+Enable port forwarding in a separate shell:
+```
+$ make port-forward
+```
+Configure an endpoint:
+```
+$ make create-mock-service
+```
+Validate that requests can be proxied :
+```
+$ make test
+
+✅ Kong CP is Active.
+✅ Kong DP is Active.
 ```
 
 ![k9s_pods](./images/k9s-pods.png)
 
-Enable port forwarding in a separate shell:
-```
-make port-forward
-```
 
-Configure an endpoint:
+To teardown:
 ```
-make create-mock-service
-```
+$ make nuke
 
-Validate:
-```
-make test
-```
-
-Teardown:
-```
-make nuke
+🧨 NUKING Kong...
+release "kong-cp" uninstalled
+release "kong-dp" uninstalled
+namespace "kong" deleted
+INFO[0000] stopping colima
+INFO[0000] stopping ...                                  context=kubernetes
+INFO[0004] stopping ...                                  context=docker
+INFO[0010] stopping ...                                  context=vm
+INFO[0014] done
 ```
 
 Note: This local implementation relies on runnning a [k3s](https://k3s.io/) node using colima. This can be ran separately independently from the reverse proxy services for other use cases.
@@ -74,7 +112,7 @@ curl "localhost:8001/services/serviceB/routes" -d paths="/gh" -d preserve_host=t
 
 ##### Validate
 
-You can now proxy requests from your local k8s cluster to two different websites using different paths: [localhost/](https://localhost/) and [localhost/gh](https://localhost/gh).
+You can now proxy requests from your local K8s cluster to two different websites using different paths: [localhost/](https://localhost/) and [localhost/gh](https://localhost/gh).
 
 ![portfolio](./images/portfolio.png)
 
@@ -99,9 +137,9 @@ curl -s -i -X GET http://localhost:80/mock/anything | grep X-Cache
 
 #### Rate Limiting
 
-Rate limiting can be enabled in order to protect against DOS attaks, or to limit usage on upstream services. The open source [Rate Limiting](https://docs.konghq.com/hub/kong-inc/rate-limiting/) plugin can be configured based on requests per unit time (second, minute, hour, etc.). It can be applied to a specific endpoit or requester, and can aggregate requests by various fields.
+Rate limiting can be enabled in order to protect against DOS attacks, or to limit usage on upstream services. The open source [Rate Limiting](https://docs.konghq.com/hub/kong-inc/rate-limiting/) plugin can be configured based on requests per unit time (second, minute, hour, etc.). It can be applied to a specific endpoint or requester, and can aggregate requests by various fields.
 
-##### Confiugre:
+##### Configure:
 ```
 curl localhost:8001/plugins -d "name=rate-limiting" -d "config.minute=5" -d "config.policy=local"
 
