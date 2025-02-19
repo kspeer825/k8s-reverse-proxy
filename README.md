@@ -18,15 +18,19 @@ Start up the reverse proxy services:
 $ make bootstrap
 
 ▶️  Bootstrapping Kong 🦍...
+
+▶️  Pulling helm charts...
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "kong" chart repository
 ...Successfully got an update from the "bitnami" chart repository
 Update Complete. ⎈Happy Helming!⎈
+
 ▶️  Setting up kong namespace ...
 namespace/kong created
 secret/kong-enterprise-license created
+
 ▶️  Setting cluster certs...
-secret/kong-cluster-cert created▶️  Pulling helm charts...
+secret/kong-cluster-cert created
 
 ▶️  Helm install kong-cp:
 NAME: kong-cp
@@ -34,36 +38,41 @@ LAST DEPLOYED: Thu Feb 13 15:43:12 2025
 NAMESPACE: kong
 STATUS: deployed
 REVISION: 1
-⏸️. Waitig for CP to spin up...
+
+▶️  Waitig for CP to spin up...
+
 ▶️  Helm install kong-dp:
 NAME: kong-dp
 LAST DEPLOYED: Thu Feb 13 15:45:17 2025
 NAMESPACE: kong
 STATUS: deployed
 REVISION: 1
-⏹️  Bootstrap complete.
+
+▶️  Bootstrap complete.
 ```
 
 Enable port forwarding in a separate shell:
 ```
-$ make port-forward
+$ make port-forward  # exposes 8001,8005
 ```
 Configure an endpoint:
 ```
-$ make create-mock-service
+$ curl -s "localhost:8001/services" -d name=mock -d url="https://httpbin.konghq.com" | jq .
+$ curl -s "localhost:8001/services/mock/routes" -d "paths=/mock" | jq .
 ```
-Validate that requests can be proxied :
+Validate that requests can be proxied:
 ```
 $ make test
 
 ✅ Kong CP is Active.
 ✅ Kong DP is Active.
 ```
+There should be three healthy services running; the control plane, the data plane, and the database.
 
 ![k9s_pods](./images/k9s-pods.png)
 
 
-To teardown:
+### Teardown
 ```
 $ make nuke
 
@@ -78,9 +87,9 @@ INFO[0010] stopping ...                                  context=vm
 INFO[0014] done
 ```
 
-Note: This local implementation relies on runnning a [k3s](https://k3s.io/) node using colima. This can be ran separately independently from the reverse proxy services for other use cases.
+Note: This local implementation relies on runnning a [k3s](https://k3s.io/) node using colima. This can be ran independently from the reverse proxy services for other use cases.
 
-Start k3s node:
+
 ```
 colima start --kubernetes
 ```
