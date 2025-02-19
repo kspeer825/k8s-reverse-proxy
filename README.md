@@ -78,7 +78,7 @@ $ make test
 ✅ Kong CP is Active.
 ✅ Kong DP is Active.
 ```
-There should be three healthy services running; the control plane, the data plane, and the database.
+There should be three healthy services running: the control plane, the data plane, and the database.
 
 ### Teardown
 ```
@@ -95,7 +95,7 @@ INFO[0010] stopping ...                                  context=vm
 INFO[0014] done
 ```
 
-Note: This local implementation relies on running a [k3s](https://k3s.io/) node using colima. This can be ran independently from the reverse proxy services for other use cases.
+Note: This local implementation relies on running a [k3s](https://k3s.io/) node using colima. This can be run independently from the reverse proxy services for other use cases.
 ```
 colima start --kubernetes
 ```
@@ -131,7 +131,7 @@ You can now proxy requests from the local K8s cluster to different domains using
 
 ### Response Caching
 
-Responses for frequently made requests can be cached at your ingress point in order to reduce response times, and lighten the load on upstream services. The open source [Proxy Cache](https://docs.konghq.com/hub/kong-inc/proxy-cache/) plugin can be configured based on request method, content type, and status code. It can be applied to a specific endpoint or requester.
+Responses for frequently made requests can be cached at your ingress point in order to reduce response times and lighten the load on upstream services. The open source [Proxy Cache](https://docs.konghq.com/hub/kong-inc/proxy-cache/) plugin can be configured based on request method, content type, and status code. It can be applied to a specific endpoint or requester.
 
 #### Configure:
 ```
@@ -148,7 +148,7 @@ curl -s -i -X GET http://localhost:80/mock/anything | grep X-Cache
 
 ### Rate Limiting
 
-Rate limiting can be enabled in order to protect against DOS attacks, or to limit usage on upstream services. The open source [Rate Limiting](https://docs.konghq.com/hub/kong-inc/rate-limiting/) plugin can be configured based on requests per unit time (second, minute, hour, etc.). It can be applied to a specific endpoint or requester, and can aggregate requests by various fields.
+Rate limiting can be enabled in order to protect against DOS attacks or to limit usage on upstream services. The open source [Rate Limiting](https://docs.konghq.com/hub/kong-inc/rate-limiting/) plugin can be configured based on requests per unit time (second, minute, hour, etc.). It can be applied to a specific endpoint or requester and can aggregate requests by various fields.
 
 #### Configure:
 ```
