@@ -4,6 +4,14 @@
 
 This repo demos how to spin up an instance of the reverse proxy locally.
 
+- [Demo](#demo)
+  - [Setup](#setup)
+  - [Teardwon](#teardown)
+- [Use Cases](#use-cases)
+  - [Reverse Proxy](#reverse-proxy)
+  - [Response Caching](#response-caching)
+  - [Rate Limiting](#rate-limiting)
+
 ## Demo
 
 ### Dependencies
@@ -88,19 +96,13 @@ INFO[0014] done
 ```
 
 Note: This local implementation relies on runnning a [k3s](https://k3s.io/) node using colima. This can be ran independently from the reverse proxy services for other use cases.
-
-
 ```
 colima start --kubernetes
-```
-Terminate k3s node:
-```
-colima stop
 ```
 
 ## Use Cases
 
-### Proxy Gateway
+### Reverse Proxy
 
 A reverse proxy enables a single ingress point to upstream web services. The Kong Gateway accomplishes this through path based routing. This is useful for scenarios where you have upstream web apps or APIs that are non-public facing, but still require secure ingress from the internet. You can configure paths to your private web services in Kong, expose the K8s ingress entrypoint, and apply one of the supported authentication methods at the proxy level (see [Kong Auth plugins](https://docs.konghq.com/hub/?tier=free&category=authentication)).
 
