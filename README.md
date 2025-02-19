@@ -104,7 +104,7 @@ colima start --kubernetes
 
 ### Reverse Proxy
 
-A reverse proxy enables a single ingress point to upstream web services. The Kong Gateway accomplishes this through path based routing. This is useful for scenarios where you have upstream web apps or APIs that are non-public facing, but still require secure ingress from the internet. You can configure paths to your private web services in Kong, expose the K8s ingress entry-point, and apply one of the supported authentication methods at the proxy level (see [Kong Auth plugins](https://docs.konghq.com/hub/?tier=free&category=authentication)).
+A reverse proxy enables a single ingress point to upstream web services. The Kong Gateway accomplishes this through path-based routing. This is useful for scenarios where you have upstream web apps or APIs that are non-public facing, but still require secure ingress from the internet. You can configure paths to your private web services in Kong, expose the K8s ingress entry-point, and apply one of the supported authentication methods at the proxy level (see [Kong Auth plugins](https://docs.konghq.com/hub/?tier=free&category=authentication)).
 
 #### Configure
 Endpoint A:
